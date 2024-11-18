@@ -13,9 +13,6 @@ export class CreateExamDto {
   @IsArray()
   chapters: string[];
 
-  @IsString()
-  text: string;
-
   @IsNotEmpty()
   @IsNumber()
   difficultyLevel: number; // Range from 1 to 10

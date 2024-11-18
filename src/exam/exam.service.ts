@@ -42,14 +42,14 @@ export class ExamService {
     const chapters = gradeData[semester];
     return chapters || [];
   }
-  async createExam(examDto: any): Promise<Exam> {
+  async createExam(examDto: any): Promise<string> {
     // Step 1: Save the initial exam
     const createdExam = new this.examModel(examDto);
     const savedExam = await createdExam.save();
   
     // Step 2: Prepare the prompt for the OpenAI API
     const prompt = `Can you build a ${savedExam.subject} exam for ${savedExam.grade} grade on these chapters: ${savedExam.chapters.join(
-      ', ',
+      ', '
     )} with the difficulty level of ${savedExam.difficultyLevel}/10? Keep in mind these specifications: ${savedExam.prompt || ''}`;
   
     // Step 3: Call the OpenAI API and update the text field
@@ -61,7 +61,8 @@ export class ExamService {
       await savedExam.save(); // Save the updated exam
     }
   
-    return savedExam;
+    // Return only the `text` field
+    return savedExam.text;
   }
   
   

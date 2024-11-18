@@ -9,9 +9,11 @@ export class ExamController {
   constructor(private readonly examService: ExamService) {}
 
   @Post()
-  async createExam(@Body() examDto: any) {
-    return this.examService.createExam(examDto);
+  async createExam(@Body() examDto: CreateExamDto): Promise<{ text: string }> {
+    const text = await this.examService.createExam(examDto);
+    return { text };
   }
+  
   @Get(':id')
 async getExam(@Param('id') id: string): Promise<Exam> {
   return this.examService.findById(id);
