@@ -6,9 +6,9 @@ export enum Subject {
 }
 
 export enum Grade {
-  Grade7 = '7eme',
-  Grade8 = '8eme',
-  Grade9 = '9eme',
+  Grade7 = '7th',
+  Grade8 = '8th',
+  Grade9 = '9th',
 }
 
 export enum Semester {

@@ -10,9 +10,6 @@ export class CreateExamDto {
   grade: string; // Enum: 'Grade 10', 'Grade 11', etc.
 
   @IsNotEmpty()
-  @IsString()
-  semester: string; // Enum: 'Fall', 'Spring'
-
   @IsArray()
   chapters: string[];
 

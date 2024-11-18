@@ -9,7 +9,5 @@ export class CreateFavQuestionDto {
   @IsString()
   chapter: string;
 
-  @IsNotEmpty()
-  @IsString()
   teacherId: string;
 }

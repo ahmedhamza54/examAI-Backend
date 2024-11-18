@@ -1,16 +1,21 @@
-import { Controller, Post, Get, Body, Query } from '@nestjs/common';
+import { Controller, Post, Get, Body, Query,Param } from '@nestjs/common';
 import { ExamService } from './exam.service';
 import { CreateExamDto } from './dto/create-exam.dto';
 import { Subject, Grade, Semester } from '../constants/enum';
+import { Exam } from '../schemas/exam.schema';
 
 @Controller('exams')
 export class ExamController {
   constructor(private readonly examService: ExamService) {}
 
   @Post()
-  async create(@Body() createExamDto: CreateExamDto) {
-    return this.examService.create(createExamDto);
+  async createExam(@Body() examDto: any) {
+    return this.examService.createExam(examDto);
   }
+  @Get(':id')
+async getExam(@Param('id') id: string): Promise<Exam> {
+  return this.examService.findById(id);
+}
 
   @Get()
   async findAll() {

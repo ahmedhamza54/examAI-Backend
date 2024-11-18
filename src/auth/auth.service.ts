@@ -190,4 +190,10 @@ export class AuthService {
     const role = null; // Implement roles logic
     return role.permissions;
   }
+
+  async getNameByEmail(email: string): Promise<string | null> {
+    const user = await this.UserModel.findOne({ email }); // Correct Mongoose query
+    return user ? user.name : null;
+  }
+  
 }
