@@ -9,10 +9,11 @@ export class ExamController {
   constructor(private readonly examService: ExamService) {}
 
   @Post()
-  async createExam(@Body() examDto: CreateExamDto): Promise<{ text: string }> {
-    const text = await this.examService.createExam(examDto);
-    return { text };
+  async createExam(@Body() examDto: CreateExamDto): Promise<{ id: string; text: string }> {
+    const result = await this.examService.createExam(examDto);
+    return result;
   }
+  
   
   @Get(':id')
 async getExam(@Param('id') id: string): Promise<Exam> {
@@ -36,4 +37,12 @@ async getExam(@Param('id') id: string): Promise<Exam> {
       semester as Semester
     );
   }
+  @Post('regenerate')
+  async regenerateExam(@Body() updateExamDto: { id: string; text: string; prompt: string }): Promise<{ id: string; text: string }> {
+    const result = await this.examService.regenerateExam(updateExamDto);
+    return result;
+  }
+  
 }
+
+

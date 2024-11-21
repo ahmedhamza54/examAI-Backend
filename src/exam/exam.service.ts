@@ -42,7 +42,7 @@ export class ExamService {
     const chapters = gradeData[semester];
     return chapters || [];
   }
-  async createExam(examDto: any): Promise<string> {
+  async createExam(examDto: any): Promise<{ id: string; text: string }> {
     // Step 1: Save the initial exam
     const createdExam = new this.examModel(examDto);
     const savedExam = await createdExam.save();
@@ -61,9 +61,10 @@ export class ExamService {
       await savedExam.save(); // Save the updated exam
     }
   
-    // Return only the `text` field
-    return savedExam.text;
+    // Step 4: Return the exam's id and generated text
+    return { id: savedExam._id.toString(), text: savedExam.text };
   }
+  
   
   
 
@@ -130,6 +131,32 @@ export class ExamService {
       console.error('Error during OpenAI API call:', error);
       return null;
     }
+  }
+
+  async regenerateExam(updateExamDto: { id: string; text: string; prompt: string }): Promise<{ id: string; text: string }> {
+    const { id, text: oldText, prompt: adjustmentPrompt } = updateExamDto;
+  
+    // Step 1: Find the existing exam by ID
+    const existingExam = await this.examModel.findById(id);
+    if (!existingExam) {
+      throw new Error(`Exam with ID ${id} not found.`);
+    }
+  
+    // Step 2: Prepare the regeneration prompt
+    const regenerationPrompt = `Based on the following old exam text:\n"${oldText}"\nPlease regenerate the exam with these adjustments:\n${adjustmentPrompt}`;
+  
+    // Step 3: Call OpenAI API to regenerate the exam
+    const regeneratedText = await this.getAssistantResponse(regenerationPrompt);
+    if (!regeneratedText) {
+      throw new Error('Failed to regenerate exam. No response from OpenAI API.');
+    }
+  
+    // Step 4: Update the exam's text field in the database
+    existingExam.text = regeneratedText;
+    await existingExam.save();
+  
+    // Step 5: Return the exam's id and updated text
+    return { id: existingExam._id.toString(), text: regeneratedText };
   }
   
   
