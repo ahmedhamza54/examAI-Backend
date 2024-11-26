@@ -24,6 +24,13 @@ export class ExamService {
       }
       return exam;
     }
+    async deleteById(id: string): Promise<void> {
+      const result = await this.examModel.findByIdAndDelete(id);
+      if (!result) {
+        throw new NotFoundException(`Exam with ID ${id} not found.`);
+      }
+    }
+    
 
   async findAll(): Promise<Exam[]> {
     return this.examModel.find().exec();
@@ -153,7 +160,7 @@ export class ExamService {
   
     // Step 4: Update the exam's text field in the database
     existingExam.text = regeneratedText;
-    await existingExam.save();
+    await existingExam.save();    
   
     // Step 5: Return the exam's id and updated text
     return { id: existingExam._id.toString(), text: regeneratedText };
