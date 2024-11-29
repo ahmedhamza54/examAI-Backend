@@ -165,6 +165,92 @@ export class ExamService {
     // Step 5: Return the exam's id and updated text
     return { id: existingExam._id.toString(), text: regeneratedText };
   }
+
+  async updateExam(id: string, newText: string): Promise<Exam> {
+    // Step 1: Find the existing exam by ID
+    const existingExam = await this.examModel.findById(id);
+    if (!existingExam) {
+      throw new NotFoundException(`Exam with ID ${id} not found.`);
+    }
+
+    // Step 2: Update the exam's text field
+    existingExam.text = newText;
+
+    // Step 3: Save the changes in the database
+    return await existingExam.save();
+  }
+
+
+    // Fetch exam by ID and prepare correction prompt
+    async correctExam(examId: string, examAttempt: string): Promise<string | null> {
+      // Step 1: Retrieve the exam by its ID
+      const exam = await this.findById(examId);
+      if (!exam) {
+        throw new NotFoundException(`Exam with ID ${examId} not found`);
+      }
   
+      // Step 2: Formulate the correction prompt
+      const prompt = `This is the exam text: '${exam.text}' and this is the exam attempt: '${examAttempt}'`;
+  
+      // Step 3: Pass the prompt to the assistant and return its response
+      return await this.getAssistantCorrection(prompt);
+    }
+  
+    // Interact with the assistant for correction
+    private async getAssistantCorrection(prompt: string): Promise<string | null> {
+      require('dotenv').config();
+      const OpenAI = require('openai');
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+  
+      try {
+        // Step 1: Create a thread
+        const threadId = "thread_PShbdzRnBcQ7xQmD7PbEO8l1"; // Use existing thread
+        await openai.beta.threads.messages.create(threadId, {
+          role: 'user',
+          content: prompt,
+        });
+  
+        // Step 2: Run the assistant
+        const run = await openai.beta.threads.runs.create(threadId, {
+          assistant_id: 'asst_ifU6yV1tXFEkIuL6m1Z8FcFh',
+        });
+  
+        // Step 3: Wait for completion
+        let response = null;
+        const startTime = Date.now();
+        const timeout = 60000; // 60 seconds timeout
+  
+        while (!response) {
+          if (Date.now() - startTime > timeout) {
+            throw new Error('Request timed out while waiting for completion');
+          }
+  
+          const runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
+  
+          if (runStatus.status === 'completed') {
+            const allMessages = await openai.beta.threads.messages.list(threadId);
+  
+            // Extract assistant's response
+            const assistantMessage = allMessages.data.find(
+              (message) => message.role === 'assistant',
+            );
+  
+            if (assistantMessage) {
+              response = assistantMessage.content[0]?.text?.value || null;
+            }
+            break;
+          } else if (runStatus.status !== 'queued' && runStatus.status !== 'in_progress') {
+            throw new Error(`Run failed with status: ${runStatus.status}`);
+          }
+        }
+  
+        return response;
+      } catch (error) {
+        console.error('Error during OpenAI API call:', error);
+        return null;
+      }
+    }
   
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Query,Param,Delete } from '@nestjs/common';
+import { Controller, Post, Get, Body, Query,Param,Delete,Put   } from '@nestjs/common';
 import { ExamService } from './exam.service';
 import { CreateExamDto } from './dto/create-exam.dto';
 import { Subject, Grade, Semester } from '../constants/enum';
@@ -48,6 +48,30 @@ async deleteExam(@Param('id') id: string): Promise<{ message: string }> {
     const result = await this.examService.regenerateExam(updateExamDto);
     return result;
   }
+  @Put(':id')
+  async updateExam(
+    @Param('id') id: string,
+    @Body('text') text: string,
+  ): Promise<{ message: string; updatedExam: Exam }> {
+    const updatedExam = await this.examService.updateExam(id, text);
+    return {
+      message: `Exam with ID ${id} has been successfully updated.`,
+      updatedExam,
+    };
+  }
+
+  @Post('correct/:id')
+async correctExam(
+  @Param('id') examId: string,
+  @Body('attempt') examAttempt: string,
+): Promise<{ message: string; correction: string }> {
+  const correction = await this.examService.correctExam(examId, examAttempt);
+  return {
+    message: 'Correction completed successfully.',
+    correction,
+  };
+}
+
   
 }
 
