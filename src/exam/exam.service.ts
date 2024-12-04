@@ -5,11 +5,14 @@ import { Exam } from '../schemas/exam.schema';
 import { CreateExamDto } from './dto/create-exam.dto';
 import { ChaptersMap } from '../constants/chapters.constants';
 import { Subject, Grade, Semester } from '../constants/enum';
+import { Teacher } from '../schemas/teacher.schema'
 
 
 @Injectable()
 export class ExamService {
-  constructor(@InjectModel(Exam.name) private examModel: Model<Exam>) {}
+  constructor(@InjectModel(Exam.name) private examModel: Model<Exam>) {}  //,@InjectModel('Teacher') private readonly teacherModel: Model<Teacher>
+  
+
 
   async create(createExamDto: CreateExamDto): Promise<Exam> {
     const newExam = new this.examModel(createExamDto);
@@ -31,6 +34,13 @@ export class ExamService {
       }
     }
     
+    async findByTeacherId(teacherId:String): Promise<Exam[]> {
+      const exams = await this.examModel.find({teacherId:teacherId}).exec();
+      if (!exams) {
+        throw new NotFoundException(`Exam with ID ${teacherId} not found`);
+      }
+      return exams;
+    }
 
   async findAll(): Promise<Exam[]> {
     return this.examModel.find().exec();
@@ -53,6 +63,10 @@ export class ExamService {
     // Step 1: Save the initial exam
     const createdExam = new this.examModel(examDto);
     const savedExam = await createdExam.save();
+   // const teacher = this.teacherModel.findById(createdExam.teacherId)
+    //;(await teacher).specialization
+  
+    
   
     // Step 2: Prepare the prompt for the OpenAI API
     const prompt = `Can you build a ${savedExam.subject} exam for ${savedExam.grade} grade on these chapters: ${savedExam.chapters.join(

@@ -4,9 +4,10 @@ import {
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
+  Logger
 } from '@nestjs/common';
 import { SignupDto } from './dtos/signup.dto';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectModel ,Types } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import mongoose, { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
@@ -17,8 +18,9 @@ import { v4 as uuidv4 } from 'uuid';
 // Import nanoid dynamically to handle ESM module
 const nanoidImport = () => import('nanoid');
 import { ResetToken } from './schemas/reset-token.schema';
-import { MailService } from 'src/services/mail.service';
+import { MailService } from 'src/services/mail.service'; 
 import { RolesService } from 'src/roles/roles.service';
+import { Teacher, TeacherDocument } from 'src/schemas/teacher.schema';
 
 @Injectable()
 export class AuthService {
@@ -31,6 +33,8 @@ export class AuthService {
     private jwtService: JwtService,
     private mailService: MailService,
     private rolesService: RolesService,
+    @InjectModel(Teacher.name) 
+    private TeacherModel: Model<TeacherDocument>,
   ) {}
 
   async signup(signupData: SignupDto) {
@@ -73,9 +77,18 @@ export class AuthService {
 
     // Generate JWT tokens
     const tokens = await this.generateUserTokens(user._id);
+    const userId = user._id.toString()
+  
+    const teacher = await this.TeacherModel.findOne({ userId }).exec();
+
+    if (!teacher) {
+      throw new Error(`Teacher not found for user ID: ${user._id} `);
+    }
+
     return {
       ...tokens,
       userId: user._id,
+      teacherId:teacher._id
     };
   }
 

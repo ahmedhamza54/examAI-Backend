@@ -13,4 +13,8 @@ export class CreateTeacherDto {
   @IsArray()
   @IsOptional()
   exams: Types.ObjectId[];
+
+  @IsString()
+  @IsOptional()
+  specialization: Types.ObjectId;
 }

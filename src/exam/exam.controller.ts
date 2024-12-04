@@ -41,6 +41,10 @@ async deleteExam(@Param('id') id: string): Promise<{ message: string }> {
   async findAll() {
     return this.examService.findAll();
   }
+  @Get('teacher/:id')
+  async findByTeacherId(@Param('id') id: string) {
+    return this.examService.findByTeacherId(id);
+  }
 
  
   @Post('regenerate')

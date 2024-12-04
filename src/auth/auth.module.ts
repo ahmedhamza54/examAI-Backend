@@ -10,6 +10,7 @@ import {
 import { ResetToken, ResetTokenSchema } from './schemas/reset-token.schema';
 import { MailService } from 'src/services/mail.service';
 import { RolesModule } from 'src/roles/roles.module';
+import { Teacher, TeacherSchema } from '../schemas/teacher.schema'
 
 @Module({
   imports: [
@@ -26,6 +27,10 @@ import { RolesModule } from 'src/roles/roles.module';
       {
         name: ResetToken.name,
         schema: ResetTokenSchema,
+      },
+      {
+        name: Teacher.name, // Register Teacher schema
+        schema: TeacherSchema,
       },
     ]),
   ],

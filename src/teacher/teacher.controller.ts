@@ -2,10 +2,23 @@ import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/commo
 import { TeacherService } from './teacher.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
+import { Subject } from './../constants/enum'
+
 
 @Controller('teachers')
 export class TeacherController {
   constructor(private readonly teacherService: TeacherService) {}
+
+  @Get('subjects')
+  getSubjects() {
+    return this.teacherService.getSubjects();
+  }
+
+  // Get teachers by subject specialization
+  @Get('by-subject/:subject')
+  async findTeachersBySubject(@Param('subject') subject: Subject) {
+    return this.teacherService.findTeachersBySubject(subject);
+  }
 
   @Post()
   async create(@Body() createTeacherDto: CreateTeacherDto) {
@@ -31,4 +44,5 @@ export class TeacherController {
   async remove(@Param('id') id: string) {
     return this.teacherService.remove(id);
   }
+  
 }
