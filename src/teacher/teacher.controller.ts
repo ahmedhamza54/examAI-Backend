@@ -44,5 +44,6 @@ export class TeacherController {
   async remove(@Param('id') id: string) {
     return this.teacherService.remove(id);
   }
+
   
 }

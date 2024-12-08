@@ -80,6 +80,7 @@ export class AuthService {
     const userId = user._id.toString()
   
     const teacher = await this.TeacherModel.findOne({ userId }).exec();
+    const specialization = (await this.TeacherModel.findById(teacher._id).exec()).specialization
 
     if (!teacher) {
       throw new Error(`Teacher not found for user ID: ${user._id} `);
@@ -88,7 +89,8 @@ export class AuthService {
     return {
       ...tokens,
       userId: user._id,
-      teacherId:teacher._id
+      teacherId:teacher._id,
+      specialization:specialization
     };
   }
 

@@ -74,7 +74,7 @@ export class ExamService {
     )} with the difficulty level of ${savedExam.difficultyLevel}/10? Keep in mind these specifications: ${savedExam.prompt || ''}`;
   
     // Step 3: Call the OpenAI API and update the text field
-    const apiResponse = await this.getAssistantResponse(prompt);
+    const apiResponse = await this.getAssistantResponse(prompt,savedExam.subject);
   
     if (apiResponse) {
       console.log('API Response:', apiResponse); // Debug the response
@@ -89,12 +89,24 @@ export class ExamService {
   
   
 
-  private async getAssistantResponse(prompt: string): Promise<string | null> {
+  private async getAssistantResponse(prompt: string,subject: String): Promise<string | null> {
     require('dotenv').config();
     const OpenAI = require('openai');
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
+    let Assistant_id = ''
+    if (subject == "Math")
+    {
+      Assistant_id = 'asst_7uTv1GbkpeiFYdKfe7HDSzSt'
+    } else if (subject == "Arabic")
+    {
+      Assistant_id = 'asst_Mixrip90EZkYu8mTIdKTAF53'
+    }
+    else if (subject == "English")
+    {
+       Assistant_id = 'asst_JjCqZ3yFZeUWI1XwRzyx5pAE'
+    }
   
     try {
       const myThread = await openai.beta.threads.create();
@@ -104,7 +116,7 @@ export class ExamService {
       });
   
       const myRun = await openai.beta.threads.runs.create(myThread.id, {
-        assistant_id: 'asst_7uTv1GbkpeiFYdKfe7HDSzSt',
+        assistant_id: Assistant_id,
       });
   
       let response = null;
@@ -165,9 +177,9 @@ export class ExamService {
   
     // Step 2: Prepare the regeneration prompt
     const regenerationPrompt = `Based on the following old exam text:\n"${oldText}"\nPlease regenerate the exam with these adjustments:\n${adjustmentPrompt}`;
-  
+    let subject = existingExam.subject
     // Step 3: Call OpenAI API to regenerate the exam
-    const regeneratedText = await this.getAssistantResponse(regenerationPrompt);
+    const regeneratedText = await this.getAssistantResponse(regenerationPrompt,subject);
     if (!regeneratedText) {
       throw new Error('Failed to regenerate exam. No response from OpenAI API.');
     }
