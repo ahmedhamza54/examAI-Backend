@@ -11,7 +11,7 @@ export class ExamAttempt {
   @Prop({ type: Types.ObjectId, ref: 'Exam', required: true })
   examId: Types.ObjectId;
 
-  @Prop()
+  @Prop({ type: Number, default: 0 })
   score: number;
 
   @Prop()

@@ -44,6 +44,10 @@ export class TeacherController {
   async remove(@Param('id') id: string) {
     return this.teacherService.remove(id);
   }
+  @Get('specialities/count')
+  async getSpecialitiesWithCount() {
+    return this.teacherService.getSpecialitiesWithCount();
+  }
 
   
 }

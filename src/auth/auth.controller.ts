@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Put, Req, UseGuards ,NotFoundException } from '@nestjs/common';
+import { Body, Controller, Post, Get, Put,Param, Req, UseGuards ,NotFoundException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dtos/signup.dto';
@@ -92,5 +92,11 @@ export class AuthController {
 
     return { name: userName };
   }
+  @Get('getuser/:teacherId')
+async getUserFromTeacherId(@Param('teacherId') teacherId: string) {
+  return this.authService.getUserFromTeacherId(teacherId);
+}
+
+
 
 }

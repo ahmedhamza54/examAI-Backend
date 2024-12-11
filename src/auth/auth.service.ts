@@ -197,6 +197,11 @@ export class AuthService {
     );
   }
 
+  async getUserFromTeacherId(teacherId: String){
+    const teacher = await this.TeacherModel.findById(teacherId).exec();
+    return this.UserModel.findById(teacher.userId).exec();
+  }
+
   async getUserPermissions(userId: string) {
     const user = await this.UserModel.findById(userId);
 

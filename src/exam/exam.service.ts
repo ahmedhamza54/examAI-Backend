@@ -5,12 +5,13 @@ import { Exam } from '../schemas/exam.schema';
 import { CreateExamDto } from './dto/create-exam.dto';
 import { ChaptersMap } from '../constants/chapters.constants';
 import { Subject, Grade, Semester } from '../constants/enum';
-import { Teacher } from '../schemas/teacher.schema'
+import { ExamAttempt,ExamAttemptDocument } from '../schemas/exam-attempt.schema'
 
 
 @Injectable()
 export class ExamService {
-  constructor(@InjectModel(Exam.name) private examModel: Model<Exam>) {}  //,@InjectModel('Teacher') private readonly teacherModel: Model<Teacher>
+  constructor(@InjectModel(Exam.name) private examModel: Model<Exam>,
+  @InjectModel(ExamAttempt.name) private readonly examAttemptModel: Model<ExamAttemptDocument>) {} 
   
 
 
@@ -208,19 +209,39 @@ export class ExamService {
 
 
     // Fetch exam by ID and prepare correction prompt
-    async correctExam(examId: string, examAttempt: string): Promise<string | null> {
+    async correctExam(examId: string, examAttemptId: string): Promise<string | null> {
       // Step 1: Retrieve the exam by its ID
       const exam = await this.findById(examId);
       if (!exam) {
         throw new NotFoundException(`Exam with ID ${examId} not found`);
       }
+      // Step 2: Retrieve the exam attempt by its ID
+  const examAttempt = await this.examAttemptModel.findById(examAttemptId);
+  if (!examAttempt) {
+    throw new NotFoundException(`Exam attempt with ID ${examAttemptId} not found`);
+  }
   
-      // Step 2: Formulate the correction prompt
-      const prompt = `This is the exam text: '${exam.text}' and this is the exam attempt: '${examAttempt}'`;
+      // Step 3: Formulate the correction prompt
+      const prompt = `This is the exam text: '${exam.text}' and this is the exam attempt: '${examAttempt.answerText}'`;
   
-      // Step 3: Pass the prompt to the assistant and return its response
-      return await this.getAssistantCorrection(prompt);
+      // Step 4: Pass the prompt to the assistant and get its response
+    const response = await this.getAssistantCorrection(prompt);
+
+    // Step 5: Extract the score from the last two characters of the response
+    const scoreString = response.slice(-2);
+    const score = parseInt(scoreString, 10);
+
+    if (isNaN(score)) {
+      throw new Error(`Invalid score extracted from assistant response: '${scoreString}'`);
     }
+
+    // Step 6: Update the exam attempt with the extracted score
+    examAttempt.score = score;
+    await examAttempt.save();
+
+    // Step 7: Return the response
+    return response;
+      }
   
     // Interact with the assistant for correction
     private async getAssistantCorrection(prompt: string): Promise<string | null> {

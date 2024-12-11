@@ -4,6 +4,8 @@ import { Model } from 'mongoose';
 import { Student } from '../schemas/student.schema';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { Grade } from './../constants/enum'
+
 
 @Injectable()
 export class StudentService {
@@ -31,4 +33,17 @@ export class StudentService {
   async remove(id: string): Promise<Student> {
     return this.studentModel.findByIdAndDelete(id).exec();
   }
+
+  getGrades(): Grade[] {
+    const Grades = Object.values(Grade);
+    console.log('Grades:', Grades);
+    return Grades;
+  }
+
+  async findStudentsByGrade(grade: Grade): Promise<Student[]> {
+    console.log('students:', this.studentModel.find({ grade: grade }).exec());
+
+    return this.studentModel.find({ grade: grade }).exec();
+  }
+
 }

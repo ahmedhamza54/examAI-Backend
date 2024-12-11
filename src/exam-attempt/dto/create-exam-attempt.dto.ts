@@ -10,15 +10,12 @@ export class CreateExamAttemptDto {
   @IsString()
   examId: Types.ObjectId;
 
-  @IsArray()
-  answers: string[];
-
-  @IsNumber()
-  score: number;
+  //@IsNumber()
+ // score: number;
 
   @IsString()
   answerText: string;
 
-  @IsDate()
-  attemptDate: Date;
+  //@IsDate()
+  //attemptDate: Date;
 }

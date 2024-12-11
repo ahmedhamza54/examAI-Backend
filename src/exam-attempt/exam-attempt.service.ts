@@ -12,4 +12,7 @@ export class ExamAttemptService {
     const attempt = new this.examAttemptModel(createExamAttemptDto);
     return await attempt.save();
   }
+  async getAllExamAttempts(): Promise<ExamAttempt[]> {
+    return await this.examAttemptModel.find().exec();
+  }
 }

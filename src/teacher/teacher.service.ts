@@ -39,11 +39,31 @@ export class TeacherService {
     return subjects;
   }
 
+
   // Find teachers by subject specialization
   async findTeachersBySubject(subject: Subject): Promise<Teacher[]> {
     console.log('teachers:', this.teacherModel.find({ specialization: subject }).exec());
 
     return this.teacherModel.find({ specialization: subject }).exec();
+  }
+  async getSpecialitiesWithCount(): Promise<{ speciality: string; count: number }[]> {
+    const result = await this.teacherModel.aggregate([
+      {
+        $group: {
+          _id: '$specialization', // Group by the 'specialization' field
+          count: { $sum: 1 },     // Count the number of documents in each group
+        },
+      },
+      {
+        $project: {
+          _id: 0,                 // Exclude the MongoDB default '_id' field
+          speciality: '$_id',     // Rename '_id' to 'speciality'
+          count: 1,               // Include the count
+        },
+      },
+    ]);
+
+    return result;
   }
   
 }

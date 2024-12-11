@@ -64,12 +64,12 @@ async deleteExam(@Param('id') id: string): Promise<{ message: string }> {
     };
   }
 
-  @Post('correct/:id')
+  @Get('correct/:idExam/:idAttempt')
 async correctExam(
-  @Param('id') examId: string,
-  @Body('attempt') examAttempt: string,
+  @Param('idExam') examId: string,
+  @Param('idAttempt') examAttemptid: string,
 ): Promise<{ message: string; correction: string }> {
-  const correction = await this.examService.correctExam(examId, examAttempt);
+  const correction = await this.examService.correctExam(examId, examAttemptid);
   return {
     message: 'Correction completed successfully.',
     correction,
