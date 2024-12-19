@@ -76,6 +76,10 @@ async correctExam(
   };
 }
 
+@Get('grade/:grade')
+async findAllExamsBySubject(@Param('grade') grade: string) {
+  return this.examService.findAllExamsBySubject(grade);
+}
   
 }
 

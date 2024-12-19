@@ -1,4 +1,4 @@
-import { Controller, Post,Get, Body } from '@nestjs/common';
+import { Controller, Post,Get, Body, Param } from '@nestjs/common';
 import { ExamAttemptService } from './exam-attempt.service';
 import { CreateExamAttemptDto } from './dto/create-exam-attempt.dto';
 import {ExamAttempt} from './entities/exam-attempt.entity'
@@ -11,8 +11,9 @@ export class ExamAttemptController {
   async create(@Body() createExamAttemptDto: CreateExamAttemptDto) {
     return this.examAttemptService.create(createExamAttemptDto);
   }
-  @Get()
-  async getAllExamAttempts(): Promise<ExamAttempt[]> {
-    return await this.examAttemptService.getAllExamAttempts();
+  @Get(':studentId')
+  async getAllExamAttempts(@Param('studentId') studentId: string): Promise<ExamAttempt[]> {
+    return await this.examAttemptService.getAllExamAttempts(studentId);
   }
+
 }

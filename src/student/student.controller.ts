@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete ,Put} from '@nestjs/common';
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -18,6 +18,15 @@ export class StudentController {
   async findTeachersBySubject(@Param('grade') grade: Grade) {
     return this.studentService.findStudentsByGrade(grade);
   }
+
+  @Put(':id/grade')
+async changeGrade(
+  @Param('id') id: string,
+  @Body('grade') grade: Grade
+) {
+  return this.studentService.changeGrade(id, grade);
+}
+
 
   @Post()
   async create(@Body() createStudentDto: CreateStudentDto) {

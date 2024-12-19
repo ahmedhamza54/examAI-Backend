@@ -139,7 +139,7 @@ export class ExamService {
             myThread.id,
           );
   
-          console.log('Retrieved Messages:', JSON.stringify(allMessages, null, 2)); // Debug the messages
+          //console.log('Retrieved Messages:', JSON.stringify(allMessages, null, 2)); // Debug the messages
   
           // Extract the assistant's response
           const assistantMessage = allMessages.data.find(
@@ -227,14 +227,11 @@ export class ExamService {
       // Step 4: Pass the prompt to the assistant and get its response
     const response = await this.getAssistantCorrection(prompt);
 
+    console.log('response:',response)
+
     // Step 5: Extract the score from the last two characters of the response
-    const scoreString = response.slice(-2);
-    const score = parseInt(scoreString, 10);
-
-    if (isNaN(score)) {
-      throw new Error(`Invalid score extracted from assistant response: '${scoreString}'`);
-    }
-
+    const score = response.trim().split('\n').slice(-1)[0];
+    
     // Step 6: Update the exam attempt with the extracted score
     examAttempt.score = score;
     await examAttempt.save();
@@ -298,6 +295,11 @@ export class ExamService {
         console.error('Error during OpenAI API call:', error);
         return null;
       }
+    }
+    async findAllExamsBySubject(grade: string): Promise<Exam[]> {
+    
+      return this.examModel.find({grade}).exec();
+    
     }
   
 }

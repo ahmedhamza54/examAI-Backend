@@ -21,6 +21,7 @@ import { ResetToken } from './schemas/reset-token.schema';
 import { MailService } from 'src/services/mail.service'; 
 import { RolesService } from 'src/roles/roles.service';
 import { Teacher, TeacherDocument } from 'src/schemas/teacher.schema';
+import { Student, StudentDocument } from 'src/schemas/student.schema';
 
 @Injectable()
 export class AuthService {
@@ -35,6 +36,8 @@ export class AuthService {
     private rolesService: RolesService,
     @InjectModel(Teacher.name) 
     private TeacherModel: Model<TeacherDocument>,
+    @InjectModel(Student.name) 
+    private StudentModel: Model<StudentDocument>,
   ) {}
 
   async signup(signupData: SignupDto) {
@@ -78,20 +81,35 @@ export class AuthService {
     // Generate JWT tokens
     const tokens = await this.generateUserTokens(user._id);
     const userId = user._id.toString()
-  
+  var specialization
     const teacher = await this.TeacherModel.findOne({ userId }).exec();
-    const specialization = (await this.TeacherModel.findById(teacher._id).exec()).specialization
-
-    if (!teacher) {
-      throw new Error(`Teacher not found for user ID: ${user._id} `);
+    if (teacher) {
+    specialization = (await this.TeacherModel.findById(teacher._id).exec()).specialization
+    }
+    
+    var grade
+    const student = await this.StudentModel.findOne({ userId }).exec();
+    if (student) {
+     grade = (await this.StudentModel.findById(student._id).exec()).grade
     }
 
-    return {
-      ...tokens,
-      userId: user._id,
-      teacherId:teacher._id,
-      specialization:specialization
-    };
+
+    if (!student) {
+      return {
+        ...tokens,
+        userId: user._id,
+        teacherId:teacher._id,
+        specialization:specialization
+      };
+  }
+    else{
+      return {
+        ...tokens,
+        userId: user._id,
+        studentId:student._id,
+        grade:grade
+      };
+    }
   }
 
   async changePassword(userId, oldPassword: string, newPassword: string) {

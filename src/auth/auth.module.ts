@@ -11,6 +11,7 @@ import { ResetToken, ResetTokenSchema } from './schemas/reset-token.schema';
 import { MailService } from 'src/services/mail.service';
 import { RolesModule } from 'src/roles/roles.module';
 import { Teacher, TeacherSchema } from '../schemas/teacher.schema'
+import { Student, StudentSchema } from 'src/schemas/student.schema';
 
 @Module({
   imports: [
@@ -31,6 +32,10 @@ import { Teacher, TeacherSchema } from '../schemas/teacher.schema'
       {
         name: Teacher.name, // Register Teacher schema
         schema: TeacherSchema,
+      },
+      {
+        name: Student.name, // Register Teacher schema
+        schema: StudentSchema,
       },
     ]),
   ],

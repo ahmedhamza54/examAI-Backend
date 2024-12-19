@@ -46,4 +46,16 @@ export class StudentService {
     return this.studentModel.find({ grade: grade }).exec();
   }
 
+  async changeGrade(id: string, newGrade: Grade): Promise<Student> {
+    const allowedGrades = Object.values(Grade);
+    if (!allowedGrades.includes(newGrade)) {
+      throw new Error(`Invalid grade. Allowed grades are: ${allowedGrades.join(', ')}`);
+    }
+    return this.studentModel.findByIdAndUpdate(
+      id,
+      { grade: newGrade },
+      { new: true }
+    ).exec();
+  }
+
 }

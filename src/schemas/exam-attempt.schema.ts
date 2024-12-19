@@ -11,8 +11,8 @@ export class ExamAttempt {
   @Prop({ type: Types.ObjectId, ref: 'Exam', required: true })
   examId: Types.ObjectId;
 
-  @Prop({ type: Number, default: 0 })
-  score: number;
+  @Prop({ type: String, default: 'not graded' })
+  score: String;
 
   @Prop()
   answerText: string;
