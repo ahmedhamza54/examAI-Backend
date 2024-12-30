@@ -7,7 +7,7 @@ import {
   Logger
 } from '@nestjs/common';
 import { SignupDto } from './dtos/signup.dto';
-import { InjectModel ,Types } from '@nestjs/mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import mongoose, { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
