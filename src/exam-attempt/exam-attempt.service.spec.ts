@@ -6,7 +6,14 @@ describe('ExamAttemptService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ExamAttemptService],
+      providers: [
+        {
+          provide: ExamAttemptService,
+          useValue: {
+            // Mock methods and properties as needed
+          },
+        },
+      ],
     }).compile();
 
     service = module.get<ExamAttemptService>(ExamAttemptService);

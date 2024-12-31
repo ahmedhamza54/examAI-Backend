@@ -5,8 +5,16 @@ describe('FavQuestionsService', () => {
   let service: FavQuestionsService;
 
   beforeEach(async () => {
+    const mockFavQuestionsModel = {}; // Mock implementation for FavQuestionsModel
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [FavQuestionsService],
+      providers: [
+        FavQuestionsService,
+        {
+          provide: 'FavQuestionsModel', // Use the same token used in your service's constructor
+          useValue: mockFavQuestionsModel,
+        },
+      ],
     }).compile();
 
     service = module.get<FavQuestionsService>(FavQuestionsService);

@@ -6,9 +6,18 @@ describe('FavQuestionsController', () => {
   let controller: FavQuestionsController;
 
   beforeEach(async () => {
+    const mockFavQuestionsService = {
+      // Add mock implementations for any methods used in the controller
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [FavQuestionsController],
-      providers: [FavQuestionsService],
+      providers: [
+        {
+          provide: FavQuestionsService,
+          useValue: mockFavQuestionsService,
+        },
+      ],
     }).compile();
 
     controller = module.get<FavQuestionsController>(FavQuestionsController);
