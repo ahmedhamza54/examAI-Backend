@@ -37,6 +37,7 @@ async function bootstrap() {
    const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document); // Swagger UI at /api
 
-  await app.listen(3000,'0.0.0.0');
+  const port = process.env.PORT || 3000; // Use Azure's port or default to 3000 for local development
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap();
