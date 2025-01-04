@@ -59,4 +59,4 @@ jobs:
           app-name: 'exam-ai'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_71EA973D7849414FA92CBEDCB2ED7077 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EBB53777C07A4A8DB96A00EE62EFADFA }}
